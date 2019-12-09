@@ -13,12 +13,14 @@ import { Provider } from 'react-redux';
 import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
 import { Helmet } from 'react-helmet';
 import chalk from 'chalk';
+import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
 
 import configureStore from './utils/configureStore';
 import renderHtml from './utils/renderHtml';
 import routes from './routes';
 import config from './config';
 import { MyAction } from './types';
+import theme from './theme';
 
 const app = express();
 
@@ -97,17 +99,20 @@ app.get('*', (req, res) => {
         'public/loadable-stats.json'
       );
       const extractor = new ChunkExtractor({ statsFile });
+      const sheets = new ServerStyleSheets();
 
       const staticContext: any = {};
-      const App = (
+      const App = sheets.collect(
         <ChunkExtractorManager extractor={extractor}>
           <Provider store={store}>
-            {/* Setup React-Router server-side rendering */}
-            <StaticRouter location={req.path} context={staticContext}>
-              {/*
+            <ThemeProvider theme={theme}>
+              {/* Setup React-Router server-side rendering */}
+              <StaticRouter location={req.path} context={staticContext}>
+                {/*
                 // @ts-ignore */}
-              {renderRoutes(routes)}
-            </StaticRouter>
+                {renderRoutes(routes)}
+              </StaticRouter>
+            </ThemeProvider>
           </Provider>
         </ChunkExtractorManager>
       );
@@ -129,11 +134,12 @@ app.get('*', (req, res) => {
 
       // Check page status
       const status = staticContext.status === '404' ? 404 : 200;
+      const css = sheets.toString();
 
       // Pass the route and initial state into html template
       res
         .status(status)
-        .send(renderHtml(head, extractor, htmlContent, initialState));
+        .send(renderHtml(head, extractor, htmlContent, initialState, css));
     } catch (err) {
       res.status(404).send('Not Found :(');
 

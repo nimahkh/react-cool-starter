@@ -5,20 +5,24 @@ export default (
   head: any,
   extractor: any,
   htmlContent: string,
-  initialState: object
+  initialState: object,
+  css: string
 ) => {
   const html = `
     <!doctype html>
     <html ${head.htmlAttributes.toString()}>
       <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no">
         <!--[if IE]>
           <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
         <![endif]-->
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <link rel="shortcut icon" href="/favicon.ico">
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
         ${head.title.toString()}
         ${head.base.toString()}
@@ -27,6 +31,8 @@ export default (
         <!-- Insert bundled styles into <link> tag -->
         ${extractor.getLinkTags()}
         ${extractor.getStyleTags()}
+
+        <style id="jss-server-side">${css}</style>
       </head>
       <body>
         <!-- Insert the router, which passed from server-side -->

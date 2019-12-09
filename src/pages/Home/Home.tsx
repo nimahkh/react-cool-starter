@@ -1,6 +1,7 @@
 import React, { useEffect, memo } from 'react';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import Button from '@material-ui/core/Button';
 
 import { usersAction } from '../../actions';
 import { UserList } from '../../components';
@@ -28,6 +29,9 @@ export const Home = ({ readyStatus, list, fetchUsersIfNeeded }: Props) => {
   return (
     <div className={styles.Home}>
       <Helmet title="Home" />
+      <Button variant="contained" color="primary">
+        Hello World
+      </Button>
       {renderUserList()}
     </div>
   );
